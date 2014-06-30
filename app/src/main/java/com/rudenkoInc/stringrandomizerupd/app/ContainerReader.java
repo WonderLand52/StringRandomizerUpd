@@ -7,15 +7,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ContainerReader {
 
     public static final String LOG_TAG = "my logs";
-    public static final String CONTAINER_SEPARATOR = ",";
 
     protected String[] readFromRandomStringsContainer(){
-        String dir = Environment.getExternalStorageDirectory() + File.separator + ContainerCreator.DIR_NAME;
-        File container = new File(dir, ContainerCreator.CONTAINER_NAME);
+        String dir = Environment.getExternalStorageDirectory() + File.separator + FilesCreator.DIR_NAME;
+        File container = new File(dir, FilesCreator.CONTAINER_NAME);
 
         StringBuilder sb = new StringBuilder();
 
@@ -25,6 +25,7 @@ public class ContainerReader {
 
             while ((line = reader.readLine()) != null){
                 sb.append(line);
+                sb.append(", ");
                 Log.d(LOG_TAG, "readerLine: " + line);
             }
             reader.close();
@@ -34,6 +35,8 @@ public class ContainerReader {
         String line = String.valueOf(sb);
         Log.d(LOG_TAG, line);
 
-        return line.trim().split(CONTAINER_SEPARATOR);
+        String[] arrLines = line.trim().split(",");
+        Log.d(LOG_TAG, Arrays.toString(arrLines));
+        return arrLines;
     }
 }

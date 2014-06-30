@@ -4,14 +4,13 @@ import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 
 import java.io.File;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    public static final String LOG_TAG = "my logs";
+
     public static final String[] STRINGS = {"one", "two", "three", "four", "five", "six"};
 
     @Override
@@ -23,19 +22,21 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void Initialize(){
-        ContainerCreator creator = new ContainerCreator(STRINGS);
+        FilesCreator creator = new FilesCreator(STRINGS);
 
         if(!isInitialized()){
-            creator.createRandomStringsContainer();
+            creator.createStringsContainer();
             startViewActivity();
         } else
             startViewActivity();
     }
 
     private boolean isInitialized(){
-        File file = this.getFileStreamPath(ContainerCreator.CONTAINER_NAME);
+        File sdDir = Environment.getExternalStorageDirectory();
+        File file = new File(sdDir, FilesCreator.DIR_NAME
+                + File.separator + FilesCreator.CONTAINER_NAME);
 
-        return file.exists();
+        return file.isFile();
     }
 
     private void startViewActivity(){

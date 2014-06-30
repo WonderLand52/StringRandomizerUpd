@@ -1,6 +1,7 @@
 package com.rudenkoInc.stringrandomizerupd.app;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,13 +20,20 @@ public class ViewActivity extends Activity implements View.OnClickListener{
     public static final int GRAVITY = 1;
     public static final int wrapContent = LinearLayout.LayoutParams.WRAP_CONTENT;
     public static final int matchParent = LinearLayout.LayoutParams.MATCH_PARENT;
+    public static final int TV_WEIGHT = 1;
+    public static final int TV_SIZE = 40;
 
     private static final int idBtnAdd = 1;
-    private static final int idBtnRefactor = 1;
-    private static final int idBtnDelete = 1;
+    private static final int idBtnRefactor = 2;
+    private static final int idBtnDelete = 3;
 
     private LinearLayout llMain;
+    private LinearLayout llComposing;
+    private LinearLayout.LayoutParams tvParams;
+    private LinearLayout.LayoutParams llParams;
+    private LinearLayout.LayoutParams ivParams;
 
+    String[] containerStrings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,58 +41,44 @@ public class ViewActivity extends Activity implements View.OnClickListener{
         setContentView(R.layout.view);
         Log.d(LOG_TAG, "HELLO IN ViewActivity");
 
-        createContainerTableView();
+        createContainerView();
         createButtons();
     }
 
-    private void createContainerTableView(){
+    private void createContainerView(){
 
         //initializing main LinearLayout
         llMain = (LinearLayout) findViewById(R.id.llMain);
 
-        String[] containerStrings = new ContainerReader().readFromRandomStringsContainer();
+        containerStrings = new ContainerReader().readFromRandomStringsContainer();
 
         //creating LayoutParams for Custom LinearLayout
-        LinearLayout.LayoutParams llParams = new LinearLayout.LayoutParams(matchParent, wrapContent);
+        llParams = new LinearLayout.LayoutParams(matchParent, wrapContent);
         llParams.setMargins(0, 15, 0, 0);
 
         //creating LayoutParams for Custom TextView
-        int weight = 1;
-        int size = 40;
-        LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(matchParent, wrapContent, weight);
+        tvParams = new LinearLayout.LayoutParams(matchParent, wrapContent, TV_WEIGHT);
 
         //creating LayoutParams for Custom ImageView
         int tvHeight = 50;
-        LinearLayout.LayoutParams ivParams = new LinearLayout.LayoutParams(matchParent, tvHeight, weight);
+        ivParams = new LinearLayout.LayoutParams(matchParent, tvHeight, TV_WEIGHT);
+
+        //creating LayoutParams for Composing LinearLayout
+        LinearLayout.LayoutParams llParamsComposing = new LinearLayout.LayoutParams(matchParent, wrapContent);
+
+        //creating Composing LinearLayout
+        llComposing = new LinearLayout(this);
+        llComposing.setLayoutParams(llParamsComposing);
+        llComposing.setOrientation(LinearLayout.VERTICAL);
 
         int counter = 0;
 
-        for(String randomStr: containerStrings){
+        for(String containerStr: containerStrings){
 
-            //creating StableLinearLayout
-            LinearLayout llStable = new LinearLayout(this);
-            llStable.setLayoutParams(llParams);
-
-            //creating StableImageView
-            ImageView ivStable = new ImageView(this);
-            ivStable.setLayoutParams(ivParams);
-            Drawable abraham = getResources().getDrawable(R.drawable.abraham);
-            ivStable.setImageDrawable(abraham);
-
-            //creating CustomTextView
-            TextView tvCustom = new TextView(this);
-            tvCustom.setLayoutParams(tvParams);
-            tvCustom.setGravity(GRAVITY);
-            tvCustom.setTextSize(size);
-            tvCustom.setText(randomStr);
-
-            //adding views to the main LinearLayout
-            llStable.addView(tvCustom);
-            llStable.addView(ivStable);
-            llMain.addView(llStable);
-
-            Log.d(LOG_TAG, String.valueOf(counter++));
+            addLinesToLLComposing(containerStr);
+            Log.d(LOG_TAG, "Adding lines to llComposing: " + String.valueOf(counter++) + containerStr);
         }
+        llMain.addView(llComposing);
     }
 
     private void createButtons(){
@@ -100,28 +94,60 @@ public class ViewActivity extends Activity implements View.OnClickListener{
         llButtons.setOrientation(LinearLayout.HORIZONTAL);
 
         //creating LayoutParams for each Button
-
         ViewGroup.LayoutParams btnParams = new ViewGroup.LayoutParams(140, wrapContent);
+
         //creating Buttons
         Button btnAdd = new Button(this);
         btnAdd.setLayoutParams(btnParams);
         btnAdd.setId(idBtnAdd);
         btnAdd.setText("Add");
+        btnAdd.setOnClickListener(this);
         llButtons.addView(btnAdd);
 
         Button btnRefactor = new Button(this);
         btnRefactor.setLayoutParams(btnParams);
-        btnAdd.setId(idBtnRefactor);
+        btnRefactor.setId(idBtnRefactor);
         btnRefactor.setText("Refactor");
+        btnRefactor.setOnClickListener(this);
         llButtons.addView(btnRefactor);
 
         Button btnDelete = new Button(this);
         btnDelete.setLayoutParams(btnParams);
-        btnAdd.setId(idBtnDelete);
+        btnDelete.setId(idBtnDelete);
         btnDelete.setText("Delete");
+        btnDelete.setOnClickListener(this);
         llButtons.addView(btnDelete);
 
         llMain.addView(llButtons);
+    }
+
+    private void addLinesToLLComposing(String randomStr){
+        String trimmedRandomStr = randomStr.trim();
+
+        if(trimmedRandomStr != null && !trimmedRandomStr.equals("")) {
+            Log.d(LOG_TAG, "Inside addLinesToLLComposing(): " + "(" + randomStr + ")");
+            //creating StableLinearLayout
+            LinearLayout llStable = new LinearLayout(this);
+            llStable.setLayoutParams(llParams);
+
+            //creating StableImageView
+            ImageView ivStable = new ImageView(this);
+            ivStable.setLayoutParams(ivParams);
+            Drawable abraham = getResources().getDrawable(R.drawable.abraham);
+            ivStable.setImageDrawable(abraham);
+
+            //creating CustomTextView
+            TextView tvCustom = new TextView(this);
+            tvCustom.setLayoutParams(tvParams);
+            tvCustom.setGravity(GRAVITY);
+            tvCustom.setTextSize(TV_SIZE);
+            tvCustom.setText(randomStr);
+
+            //adding views to the main LinearLayout
+            llStable.addView(tvCustom);
+            llStable.addView(ivStable);
+            llComposing.addView(llStable);
+        }
     }
 
 
@@ -129,8 +155,24 @@ public class ViewActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case idBtnAdd:
-                String randStr = new ContainerCreator(MainActivity.STRINGS).createRandomWord();
+                String randStr = new FilesCreator(MainActivity.STRINGS).createRandomWord();
+                addLinesToLLComposing(randStr);
 
+                break;
+
+            case idBtnDelete:
+                Intent intent = new Intent(this, DeleteActivity.class);
+                startActivityForResult(intent, 1);
+                break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        llMain.removeAllViews();
+        createContainerView();
+        createButtons();
     }
 }
