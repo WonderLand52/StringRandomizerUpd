@@ -2,19 +2,14 @@ package com.rudenkoInc.stringrandomizerupd.app;
 
 
 import android.os.Environment;
-import android.util.Log;
-
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Random;
 
 public class FilesCreator {
-    public static final String LOG_TAG = "my logs";
     public static final int MAX_RANDOM_SIZE = 5;
     public static final int MIN_SIZE = 1;
     public static final String DIR_NAME = "RandomStringsDir2";
@@ -23,23 +18,23 @@ public class FilesCreator {
 
     private String[] strings;
 
+    public FilesCreator(){}
+
     public FilesCreator(String[] strings){
         this.strings = strings;
     }
 
     protected void createStringsContainer(){
         String[] randomStrings = createRandomTable();
-        File root = Environment.getExternalStorageDirectory();
-        File outDir = new File(root.getAbsolutePath() + File.separator + DIR_NAME);
 
-        if(!outDir.isDirectory()){outDir.mkdir();}
 
         try {
-            File outputFile = new File(outDir, CONTAINER_NAME);
+            File outputFile = new File(getContainerDirectory(), CONTAINER_NAME);
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
 
             for(String randStr: randomStrings){
-                writer.write(randStr);
+                String trimmedStr = randStr.trim();
+                writer.write(trimmedStr);
                 writer.write(CONTAINER_SEPARATOR);
             }
             writer.close();
@@ -63,19 +58,15 @@ public class FilesCreator {
     }
 
     protected String createRandomWord(){
-        Log.d(LOG_TAG, "Inside createRandomWord");
-        Random rand = new Random();
-        File root = Environment.getExternalStorageDirectory();
-        File outDir = new File(root.getAbsolutePath() + File.separator + DIR_NAME);
 
-        if(!outDir.isDirectory()){outDir.mkdir();}
+        Random rand = new Random();
 
         String randomWord = strings[rand.nextInt(strings.length)];
         try {
-            File outputFile = new File(outDir, CONTAINER_NAME);
+            File outputFile = new File(getContainerDirectory(), CONTAINER_NAME);
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile, true));
 
-            writer.write(randomWord);
+            writer.write(randomWord.trim());
             writer.write(CONTAINER_SEPARATOR);
 
             writer.close();
@@ -85,6 +76,14 @@ public class FilesCreator {
             e.printStackTrace();
         }
         return randomWord;
+    }
+
+    protected File getContainerDirectory(){
+        File root = Environment.getExternalStorageDirectory();
+        File outDir = new File(root.getAbsolutePath() + File.separator + DIR_NAME);
+
+        if(!outDir.isDirectory()){outDir.mkdir();}
+        return outDir;
     }
 
 }

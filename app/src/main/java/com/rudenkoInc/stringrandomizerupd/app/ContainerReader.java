@@ -2,16 +2,12 @@ package com.rudenkoInc.stringrandomizerupd.app;
 
 
 import android.os.Environment;
-import android.util.Log;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ContainerReader {
-
-    public static final String LOG_TAG = "my logs";
 
     protected String[] readFromRandomStringsContainer(){
         String dir = Environment.getExternalStorageDirectory() + File.separator + FilesCreator.DIR_NAME;
@@ -26,17 +22,14 @@ public class ContainerReader {
             while ((line = reader.readLine()) != null){
                 sb.append(line);
                 sb.append(", ");
-                Log.d(LOG_TAG, "readerLine: " + line);
             }
             reader.close();
         } catch (IOException e){
             e.printStackTrace();
         }
         String line = String.valueOf(sb);
-        Log.d(LOG_TAG, line);
 
-        String[] arrLines = line.trim().split(",");
-        Log.d(LOG_TAG, Arrays.toString(arrLines));
-        return arrLines;
+        String[] arrContainerLines = line.trim().split(",");
+        return arrContainerLines;
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,16 +15,17 @@ import android.widget.TextView;
 
 public class ViewActivity extends Activity implements View.OnClickListener{
 
-    public static final String LOG_TAG = "my logs";
     public static final int GRAVITY = 1;
     public static final int wrapContent = LinearLayout.LayoutParams.WRAP_CONTENT;
     public static final int matchParent = LinearLayout.LayoutParams.MATCH_PARENT;
     public static final int TV_WEIGHT = 1;
     public static final int TV_SIZE = 40;
 
-    private static final int idBtnAdd = 1;
-    private static final int idBtnRefactor = 2;
-    private static final int idBtnDelete = 3;
+    private static final int ID_BTN_ADD = 1;
+    private static final int ID_BTN_REFACTOR = 2;
+    private static final int ID_BTN_DELETE = 3;
+    private static final int REQUEST_CODE_REFACTOR = 1;
+    private static final int REQUEST_CODE_DELETE = 2;
 
     private LinearLayout llMain;
     private LinearLayout llComposing;
@@ -39,7 +39,6 @@ public class ViewActivity extends Activity implements View.OnClickListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view);
-        Log.d(LOG_TAG, "HELLO IN ViewActivity");
 
         createContainerView();
         createButtons();
@@ -76,7 +75,6 @@ public class ViewActivity extends Activity implements View.OnClickListener{
         for(String containerStr: containerStrings){
 
             addLinesToLLComposing(containerStr);
-            Log.d(LOG_TAG, "Adding lines to llComposing: " + String.valueOf(counter++) + containerStr);
         }
         llMain.addView(llComposing);
     }
@@ -99,21 +97,21 @@ public class ViewActivity extends Activity implements View.OnClickListener{
         //creating Buttons
         Button btnAdd = new Button(this);
         btnAdd.setLayoutParams(btnParams);
-        btnAdd.setId(idBtnAdd);
+        btnAdd.setId(ID_BTN_ADD);
         btnAdd.setText("Add");
         btnAdd.setOnClickListener(this);
         llButtons.addView(btnAdd);
 
         Button btnRefactor = new Button(this);
         btnRefactor.setLayoutParams(btnParams);
-        btnRefactor.setId(idBtnRefactor);
+        btnRefactor.setId(ID_BTN_REFACTOR);
         btnRefactor.setText("Refactor");
         btnRefactor.setOnClickListener(this);
         llButtons.addView(btnRefactor);
 
         Button btnDelete = new Button(this);
         btnDelete.setLayoutParams(btnParams);
-        btnDelete.setId(idBtnDelete);
+        btnDelete.setId(ID_BTN_DELETE);
         btnDelete.setText("Delete");
         btnDelete.setOnClickListener(this);
         llButtons.addView(btnDelete);
@@ -125,7 +123,6 @@ public class ViewActivity extends Activity implements View.OnClickListener{
         String trimmedRandomStr = randomStr.trim();
 
         if(trimmedRandomStr != null && !trimmedRandomStr.equals("")) {
-            Log.d(LOG_TAG, "Inside addLinesToLLComposing(): " + "(" + randomStr + ")");
             //creating StableLinearLayout
             LinearLayout llStable = new LinearLayout(this);
             llStable.setLayoutParams(llParams);
@@ -150,19 +147,22 @@ public class ViewActivity extends Activity implements View.OnClickListener{
         }
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case idBtnAdd:
+            case ID_BTN_ADD:
                 String randStr = new FilesCreator(MainActivity.STRINGS).createRandomWord();
                 addLinesToLLComposing(randStr);
-
                 break;
 
-            case idBtnDelete:
-                Intent intent = new Intent(this, DeleteActivity.class);
-                startActivityForResult(intent, 1);
+            case ID_BTN_DELETE:
+                Intent intentDelete = new Intent(this, DeleteActivity.class);
+                startActivityForResult(intentDelete, REQUEST_CODE_DELETE);
+                break;
+
+            case ID_BTN_REFACTOR:
+                Intent intentRefactor = new Intent(this, ActivityRefactor.class);
+                startActivityForResult(intentRefactor, REQUEST_CODE_DELETE);
                 break;
         }
     }
