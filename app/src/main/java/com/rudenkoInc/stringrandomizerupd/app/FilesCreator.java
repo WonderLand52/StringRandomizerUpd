@@ -27,7 +27,6 @@ public class FilesCreator {
     protected void createStringsContainer(){
         String[] randomStrings = createRandomTable();
 
-
         try {
             File outputFile = new File(getContainerDirectory(), CONTAINER_NAME);
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));

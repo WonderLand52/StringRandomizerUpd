@@ -29,7 +29,6 @@ public class ContainerReader {
         }
         String line = String.valueOf(sb);
 
-        String[] arrContainerLines = line.trim().split(",");
-        return arrContainerLines;
+        return line.trim().split(",");
     }
 }
